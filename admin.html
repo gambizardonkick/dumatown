@@ -358,8 +358,8 @@
                             <input type="number" id="solpump-prizePool" min="0" step="0.01" required>
                         </div>
                         <div class="form-group">
-                            <label for="solpump-prizeUnit">Prize Unit (SOL, USD)</label>
-                            <input type="text" id="solpump-prizeUnit" value="SOL" required>
+                            <label for="solpump-wagerUnit">Wager Unit (SOL, USD)</label>
+                            <input type="text" id="solpump-wagerUnit" value="SOL" required>
                         </div>
                     </div>
                     <div class="form-group pause-toggle">
@@ -424,10 +424,6 @@
                         <div class="form-group">
                             <label for="stake-prizePool">Total Prize Pool</label>
                             <input type="number" id="stake-prizePool" min="0" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="stake-prizeUnit">Prize Unit (SOL, USD)</label>
-                            <input type="text" id="stake-prizeUnit" value="USD" required>
                         </div>
                     </div>
                     <div class="form-group pause-toggle">
@@ -567,7 +563,7 @@
                 document.getElementById('solpump-startDate').value = sp.startDate || '';
                 document.getElementById('solpump-endDate').value = sp.endDate || '';
                 document.getElementById('solpump-prizePool').value = sp.prizePool || 500;
-                document.getElementById('solpump-prizeUnit').value = sp.prizeUnit || 'SOL';
+                document.getElementById('solpump-wagerUnit').value = sp.wagerUnit || 'SOL';
                 document.getElementById('solpump-paused').checked = sp.paused || false;
                 renderPrizes('solpump', sp.prizes || [100, 75, 50, 30, 25, 25, 25, 25, 25, 20]);
                 generateSlotRows('solpump', sp.entries || []);
@@ -577,7 +573,6 @@
                 document.getElementById('stake-startDate').value = st.startDate || '';
                 document.getElementById('stake-endDate').value = st.endDate || '';
                 document.getElementById('stake-prizePool').value = st.prizePool || 500;
-                document.getElementById('stake-prizeUnit').value = st.prizeUnit || 'USD';
                 document.getElementById('stake-paused').checked = st.paused || false;
                 renderPrizes('stake', st.prizes || [100, 75, 50, 30, 25, 25, 25, 25, 25, 20]);
                 generateSlotRows('stake', st.entries || []);
@@ -616,7 +611,7 @@
                     };
                     
                     if (lb !== 'packdraw') {
-                        body.prizeUnit = document.getElementById(lb + '-prizeUnit').value;
+                        if (lb === 'solpump') body.wagerUnit = document.getElementById('solpump-wagerUnit').value;
                     }
                     body.paused = document.getElementById(lb + '-paused').checked;
                     
