@@ -23,7 +23,7 @@
     "startDate": "2026-01-27",
     "endDate": "2026-02-10",
     "prizePool": 500,
-    "prizeUnit": "USD",
+    "wagerUnit": "SOL",
     "prizes": [
       100,
       75,
@@ -43,7 +43,7 @@
     "startDate": "2026-01-27",
     "endDate": "2026-02-10",
     "prizePool": 500,
-    "prizeUnit": "USD",
+    "wagerUnit": "USD",
     "prizes": [
       100,
       75,
