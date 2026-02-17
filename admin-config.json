@@ -1,0 +1,66 @@
+{
+  "packdraw": {
+    "startDate": "2026-01-27",
+    "endDate": "2026-02-10",
+    "prizePool": 1000,
+    "prizes": [
+      500,
+      125,
+      75,
+      50,
+      50,
+      50,
+      50,
+      50,
+      50,
+      50
+    ],
+    "cachedData": null,
+    "lastFetch": null,
+    "paused": false
+  },
+  "solpump": {
+    "startDate": "2026-01-27",
+    "endDate": "2026-02-10",
+    "prizePool": 500,
+    "prizeUnit": "USD",
+    "prizes": [
+      100,
+      75,
+      50,
+      30,
+      25,
+      25,
+      25,
+      25,
+      25,
+      20
+    ],
+    "entries": [],
+    "paused": false
+  },
+  "stake": {
+    "startDate": "2026-01-27",
+    "endDate": "2026-02-10",
+    "prizePool": 500,
+    "prizeUnit": "USD",
+    "prizes": [
+      100,
+      75,
+      50,
+      30,
+      25,
+      25,
+      25,
+      25,
+      25,
+      20
+    ],
+    "entries": [],
+    "paused": false
+  },
+  "cachedData": {
+    "error": "Internal server error"
+  },
+  "lastFetch": "2026-01-27T08:48:55.751Z"
+}

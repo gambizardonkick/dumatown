@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dumatown | Leaderboards</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/assets/logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #030305;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* EPIC Animated background */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #030305 0%, #0a0a15 50%, #030305 100%);
+        }
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .bg-orb.purple { width: 600px; height: 600px; background: #8b5cf6; top: -10%; left: -10%; animation-delay: 0s; }
+        .bg-orb.pink { width: 500px; height: 500px; background: #ec4899; top: 30%; right: -15%; animation-delay: -5s; }
+        .bg-orb.blue { width: 700px; height: 700px; background: #3b82f6; bottom: -20%; left: 20%; animation-delay: -10s; }
+        .bg-orb.gold { width: 400px; height: 400px; background: #f59e0b; bottom: 10%; right: 10%; animation-delay: -15s; }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image: 
+                linear-gradient(rgba(139,92,246,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
+        }
+
+        /* Particles */
+        .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: particleRise 10s infinite ease-out;
+        }
+        .particle.dot { width: 3px; height: 3px; background: rgba(255,255,255,0.6); }
+        .particle.glow { width: 6px; height: 6px; background: #8b5cf6; box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6; }
+        .particle.star { width: 4px; height: 4px; background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+        @keyframes particleRise {
+            0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translateY(90vh) translateX(10px) scale(1); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) translateX(-10px) scale(0.5); opacity: 0; }
+        }
+
+        .container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        header {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo-section { display: flex; align-items: center; gap: 14px; }
+        .logo-section img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(#030305, #030305) padding-box, linear-gradient(135deg, #8b5cf6, #ec4899) border-box;
+            box-shadow: 0 0 25px rgba(139,92,246,0.5), 0 0 50px rgba(139,92,246,0.2);
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(139,92,246,0.5), 0 0 50px rgba(139,92,246,0.2); transform: scale(1); }
+            50% { box-shadow: 0 0 40px rgba(139,92,246,0.8), 0 0 80px rgba(139,92,246,0.4); transform: scale(1.05); }
+        }
+        .logo-section h1 {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShift 4s ease-in-out infinite;
+        }
+        @keyframes textShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+        .hero-title {
+            font-size: clamp(36px, 7vw, 64px);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 20px;
+            text-shadow: 0 0 60px rgba(139,92,246,0.5), 0 0 120px rgba(139,92,246,0.3);
+            animation: titlePulse 3s ease-in-out infinite;
+        }
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 60px rgba(139,92,246,0.5), 0 0 120px rgba(139,92,246,0.3); }
+            50% { text-shadow: 0 0 100px rgba(139,92,246,0.8), 0 0 180px rgba(139,92,246,0.5); }
+        }
+        .hero-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 50px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+
+        /* Featured card */
+        .featured-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border-radius: 32px;
+            padding: 50px 45px;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            width: 100%;
+        }
+        /* Animated gradient border */
+        .featured-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 32px;
+            padding: 2px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b, #8b5cf6);
+            background-size: 400% 400%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderGlow 4s linear infinite;
+        }
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+        /* Shine */
+        .featured-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+            animation: cardShine 5s infinite;
+        }
+        @keyframes cardShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        .featured-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 40px 100px rgba(139,92,246,0.3);
+        }
+        .pause-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(239,68,68,0.5);
+            animation: pauseBadgePulse 2s ease-in-out infinite;
+            display: none;
+        }
+        .pause-badge.show { display: block; }
+        @keyframes pauseBadgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .featured-logo {
+            width: 180px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 0 40px rgba(236,72,153,0.6));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        .featured-logo-video {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 0 40px rgba(34,197,94,0.6));
+            border-radius: 20px;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .featured-code {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 6px;
+        }
+        .featured-code strong {
+            font-size: 28px;
+            display: block;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .featured-code.green strong {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .featured-code.purple strong {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .featured-prize {
+            font-size: 52px;
+            font-weight: 900;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 25%, #fff 50%, #fbbf24 75%, #f59e0b 100%);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShimmer 2s linear infinite;
+        }
+        @keyframes goldShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+        .featured-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .featured-buttons {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 30px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 15px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(139,92,246,0.4);
+        }
+        .btn-purple:hover { 
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(139,92,246,0.5);
+        }
+        .btn-pink {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(236,72,153,0.4);
+        }
+        .btn-pink:hover { 
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(236,72,153,0.5);
+        }
+        .btn-green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(34,197,94,0.4);
+        }
+        .btn-green:hover { 
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 15px 50px rgba(34,197,94,0.5);
+        }
+
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 80px;
+            flex-wrap: wrap;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.4s;
+            font-weight: 600;
+        }
+        .feature:hover { transform: translateY(-4px); color: #fff; }
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(34,197,94,0.25) 0%, rgba(34,197,94,0.08) 100%);
+            border: 1px solid rgba(34,197,94,0.4);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s;
+        }
+        .feature:hover .feature-icon {
+            box-shadow: 0 0 30px rgba(34,197,94,0.4);
+            transform: scale(1.1);
+        }
+        .feature-icon svg { width: 24px; height: 24px; color: #22c55e; }
+
+        /* Socials */
+        .socials-section {
+            text-align: center;
+            padding: 70px 0 50px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .socials-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 28px;
+        }
+        .socials-grid { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 22px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        .social-link:hover {
+            background: linear-gradient(135deg, rgba(139,92,246,0.25) 0%, rgba(236,72,153,0.15) 100%);
+            border-color: rgba(139,92,246,0.5);
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(139,92,246,0.2);
+        }
+        .social-link img { width: 22px; height: 22px; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: rgba(255,255,255,0.3);
+            font-size: 13px;
+        }
+        .footer-warning {
+            max-width: 600px;
+            margin: 0 auto 16px;
+            font-size: 11px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 40px 0 30px; }
+            .featured-card { padding: 35px 28px; }
+            .featured-prize { font-size: 40px; }
+            .features { gap: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-orb purple"></div>
+        <div class="bg-orb pink"></div>
+        <div class="bg-orb blue"></div>
+        <div class="bg-orb gold"></div>
+    </div>
+    <div class="grid-overlay"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <img src="/assets/logo1.png" alt="Dumatown">
+                <h1>Dumatown</h1>
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1 class="hero-title">COMPETE ON OUR<br> LEADERBOARDS!</h1>
+            <p class="hero-subtitle">Win big prizes by using our codes on partner platforms</p>
+        </section>
+
+        <div class="cards-grid">
+            <!-- Packdraw Card -->
+            <div class="featured-card">
+                <div class="pause-badge" id="packdraw-pause-badge">ON PAUSE</div>
+                <img src="/assets/packdraw.png" alt="Packdraw" class="featured-logo">
+                <p class="featured-code">Use Code<strong>DUMA</strong></p>
+                <div class="featured-prize" id="packdraw-prize">$1,000</div>
+                <p class="featured-label">Prize Pool</p>
+                <div class="featured-buttons">
+                    <a href="/leaderboard/packdraw" class="btn btn-purple">View Leaderboard</a>
+                    <a href="https://packdraw.com/?ref=DUMA" target="_blank" class="btn btn-pink">Sign Up</a>
+                </div>
+            </div>
+
+            <!-- Solpump Card -->
+            <div class="featured-card">
+                <div class="pause-badge" id="solpump-pause-badge">ON PAUSE</div>
+                <img src="/assets/solpump-logo.png" alt="Solpump" class="featured-logo" style="width: 280px; height: auto;">
+                <p class="featured-code purple">Use Code<strong>DUMA</strong></p>
+                <div class="featured-prize" id="solpump-prize">$500</div>
+                <p class="featured-label">Prize Pool</p>
+                <div class="featured-buttons">
+                    <a href="/leaderboard/solpump" class="btn btn-purple">View Leaderboard</a>
+                    <a href="https://solpump.io/a/DUMA" target="_blank" class="btn btn-pink">Sign Up</a>
+                </div>
+            </div>
+
+            <!-- Stake Card -->
+            <div class="featured-card">
+                <div class="pause-badge" id="stake-pause-badge">ON PAUSE</div>
+                <img src="/assets/stake-logo.png" alt="Stake" class="featured-logo" style="width: 180px; height: auto;">
+                <p class="featured-code green">Use Code<strong>DUMATOWN</strong></p>
+                <div class="featured-prize" id="stake-prize">$500</div>
+                <p class="featured-label">Prize Pool</p>
+                <div class="featured-buttons">
+                    <a href="/leaderboard/stake" class="btn btn-purple">View Leaderboard</a>
+                    <a href="https://stake.com/?offer=dumatown&c=sBWT602f" target="_blank" class="btn btn-green">Sign Up</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span>Exclusive Rewards</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span>Exclusive Competition</span>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span>Top 10 Win Prizes</span>
+            </div>
+        </div>
+
+        <section class="socials-section">
+            <div class="socials-title">Follow Dumatown</div>
+            <div class="socials-grid">
+                <a href="https://kick.com/dumatown" target="_blank" class="social-link"><img src="/assets/kick.png" alt="Kick">Kick</a>
+                <a href="https://youtube.com/@degenduma" target="_blank" class="social-link"><img src="/assets/youtube.png" alt="YouTube">YouTube</a>
+                <a href="https://instagram.com/degenduma" target="_blank" class="social-link"><img src="/assets/instagram.png" alt="Instagram">Instagram</a>
+                <a href="https://x.com/dumatown" target="_blank" class="social-link"><img src="/assets/x.png" alt="X">X</a>
+                <a href="https://discord.gg/dumatown" target="_blank" class="social-link"><img src="/assets/discord.png" alt="Discord">Discord</a>
+            </div>
+        </section>
+
+        <footer>
+            <p class="footer-warning">Responsible Gambling Advisory: Gambling can be entertaining but involves risks. Exercise self-control, set limits, and seek support if needed.</p>
+            <p>Dumatown &copy; 2025. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Create multiple particle types
+        const particlesContainer = document.getElementById('particles');
+        const particleTypes = ['dot', 'glow', 'star'];
+        for (let i = 0; i < 80; i++) {
+            const particle = document.createElement('div');
+            const type = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+            particle.className = 'particle ' + type;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (8 + Math.random() * 8) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        function formatPrize(amount, unit) {
+            const formatted = Number(amount).toLocaleString();
+            if (unit === 'USD' || unit === '$') {
+                return '$' + formatted;
+            }
+            return formatted + ' ' + unit;
+        }
+
+        fetch('/api/config')
+            .then(res => res.json())
+            .then(data => {
+                if (data.packdraw) {
+                    document.getElementById('packdraw-prize').textContent = '$' + (data.packdraw.prizePool || 1000).toLocaleString();
+                    if (data.packdraw.paused) {
+                        document.getElementById('packdraw-pause-badge').classList.add('show');
+                    }
+                }
+                if (data.solpump) {
+                    const unit = data.solpump.prizeUnit || 'SOL';
+                    document.getElementById('solpump-prize').textContent = formatPrize(data.solpump.prizePool || 500, unit);
+                    if (data.solpump.paused) {
+                        document.getElementById('solpump-pause-badge').classList.add('show');
+                    }
+                }
+                if (data.stake) {
+                    const unit = data.stake.prizeUnit || 'USD';
+                    document.getElementById('stake-prize').textContent = formatPrize(data.stake.prizePool || 500, unit);
+                    if (data.stake.paused) {
+                        document.getElementById('stake-pause-badge').classList.add('show');
+                    }
+                }
+            })
+            .catch(e => console.error('Failed to load config:', e));
+    </script>
+</body>
+</html>

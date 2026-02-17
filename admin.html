@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Panel - Dumatown</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/assets/logo1.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #d946ef, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 14px 28px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.1); }
+        .tab-btn.active {
+            background: linear-gradient(90deg, #d946ef, #ec4899);
+            border-color: transparent;
+        }
+        .tab-btn.purple.active { background: linear-gradient(90deg, #a855f7, #ec4899); }
+        .tab-btn.teal.active { background: linear-gradient(90deg, #1abc9c, #16a085); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .card h2 { color: #d946ef; margin-bottom: 20px; font-size: 1.3rem; }
+        .card.purple h2 { color: #a855f7; }
+        .card.teal h2 { color: #1abc9c; }
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        label { display: block; margin-bottom: 8px; color: #a5cfff; font-weight: 500; }
+        input[type="date"], input[type="number"], input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(217, 70, 239, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        .purple input { border-color: rgba(168, 85, 247, 0.3); }
+        .teal input { border-color: rgba(26, 188, 156, 0.3); }
+        input:focus {
+            outline: none;
+            border-color: #d946ef;
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.3);
+        }
+        .purple input:focus { border-color: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
+        .teal input:focus { border-color: #1abc9c; box-shadow: 0 0 10px rgba(26, 188, 156, 0.3); }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #d946ef, #ec4899);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(217, 70, 239, 0.4);
+        }
+        .btn-purple {
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            color: #fff;
+        }
+        .btn-purple:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+        }
+        .btn-teal {
+            background: linear-gradient(90deg, #1abc9c, #16a085);
+            color: #fff;
+        }
+        .btn-teal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 188, 156, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-left: 10px;
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #22c55e;
+        }
+        .status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+        }
+        .current-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .config-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .config-item .label {
+            font-size: 12px;
+            color: #a5cfff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .config-item .value { font-size: 18px; font-weight: 600; margin-top: 5px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #a5cfff; text-decoration: none; }
+        .back-link:hover { color: #d946ef; }
+        .prizes-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .prize-input { display: flex; flex-direction: column; }
+        .prize-input label { font-size: 12px; margin-bottom: 4px; }
+        small { color: #a5cfff; margin-top: 5px; display: block; }
+        .hidden { display: none !important; }
+        .pause-toggle { margin-top: 15px; }
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .toggle-label input[type="checkbox"] {
+            width: 50px;
+            height: 26px;
+            appearance: none;
+            background: rgba(255,255,255,0.1);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .toggle-label input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+        .toggle-label input[type="checkbox"]:checked {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+        .toggle-label input[type="checkbox"]:checked::before {
+            left: 26px;
+        }
+        .toggle-text { color: #a5cfff; font-weight: 500; }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+        }
+        .login-container h1 { margin-bottom: 30px; }
+        
+        /* Leaderboard slots table */
+        .slots-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .slots-table th {
+            text-align: left;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.6);
+        }
+        .slots-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .slots-table .rank {
+            width: 60px;
+            font-weight: 900;
+            font-size: 18px;
+            text-align: center;
+        }
+        .slots-table .rank-1 { color: #f59e0b; }
+        .slots-table .rank-2 { color: #94a3b8; }
+        .slots-table .rank-3 { color: #fb923c; }
+        .slots-table input {
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+        .slots-table .username-col { width: 50%; }
+        .slots-table .wager-col { width: 35%; }
+        .slots-hint {
+            margin-top: 12px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .prizes-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-container">
+        <h1>Admin Login</h1>
+        <div class="card">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter admin password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div id="loginStatus" class="status"></div>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="container hidden">
+        <a href="/" class="back-link">&larr; Back to Home</a>
+        <h1>Admin Panel</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="packdraw">Packdraw</button>
+            <button class="tab-btn purple" data-tab="solpump">Solpump</button>
+            <button class="tab-btn teal" data-tab="stake">Stake</button>
+        </div>
+
+        <!-- PACKDRAW TAB -->
+        <div class="tab-content active" id="tab-packdraw">
+            <div class="card">
+                <h2>Packdraw Configuration</h2>
+                <div class="current-config">
+                    <div class="config-item">
+                        <div class="label">Start Date (UTC)</div>
+                        <div class="value" id="packdraw-currentStartDate">Loading...</div>
+                    </div>
+                    <div class="config-item">
+                        <div class="label">End Date (UTC)</div>
+                        <div class="value" id="packdraw-currentEndDate">Loading...</div>
+                    </div>
+                    <div class="config-item">
+                        <div class="label">Prize Pool</div>
+                        <div class="value" id="packdraw-currentPrizePool">$1,000</div>
+                    </div>
+                </div>
+                <form id="packdraw-configForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="packdraw-startDate">Start Date (UTC)</label>
+                            <input type="date" id="packdraw-startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="packdraw-endDate">End Date (UTC)</label>
+                            <input type="date" id="packdraw-endDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="packdraw-prizePool">Total Prize Pool ($)</label>
+                        <input type="number" id="packdraw-prizePool" min="0" step="1" required>
+                    </div>
+                    <div class="form-group pause-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="packdraw-paused">
+                            <span class="toggle-text">Pause Leaderboard (shows "ON PAUSE" on site)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/leaderboard/packdraw" class="btn btn-secondary">View Leaderboard</a>
+                </form>
+                <div id="packdraw-status" class="status"></div>
+            </div>
+            <div class="card">
+                <h2>Packdraw Prizes (Top 10)</h2>
+                <form id="packdraw-prizesForm">
+                    <div class="prizes-grid" id="packdraw-prizesGrid"></div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Save Prizes</button>
+                </form>
+                <div id="packdraw-prizesStatus" class="status"></div>
+            </div>
+        </div>
+
+        <!-- SOLPUMP TAB -->
+        <div class="tab-content" id="tab-solpump">
+            <div class="card purple">
+                <h2>Solpump Configuration</h2>
+                <form id="solpump-configForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="solpump-startDate">Start Date (UTC)</label>
+                            <input type="date" id="solpump-startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="solpump-endDate">End Date (UTC)</label>
+                            <input type="date" id="solpump-endDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="solpump-prizePool">Total Prize Pool</label>
+                            <input type="number" id="solpump-prizePool" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="solpump-prizeUnit">Prize Unit (SOL, USD)</label>
+                            <input type="text" id="solpump-prizeUnit" value="SOL" required>
+                        </div>
+                    </div>
+                    <div class="form-group pause-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="solpump-paused">
+                            <span class="toggle-text">Pause Leaderboard (shows "ON PAUSE" on site)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-purple">Save Config</button>
+                    <a href="/leaderboard/solpump" class="btn btn-secondary">View Leaderboard</a>
+                </form>
+                <div id="solpump-status" class="status"></div>
+            </div>
+            
+            <div class="card purple">
+                <h2>Solpump Prizes (Top 10)</h2>
+                <form id="solpump-prizesForm">
+                    <div class="prizes-grid" id="solpump-prizesGrid"></div>
+                    <br>
+                    <button type="submit" class="btn btn-purple">Save Prizes</button>
+                </form>
+                <div id="solpump-prizesStatus" class="status"></div>
+            </div>
+            
+            <div class="card purple">
+                <h2>Solpump Leaderboard (10 Slots)</h2>
+                <p class="slots-hint">Fill in usernames and wager amounts. Leave empty slots blank - they won't appear on the leaderboard.</p>
+                <form id="solpump-slotsForm">
+                    <table class="slots-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Username</th>
+                                <th>Wager Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="solpump-slotsBody"></tbody>
+                    </table>
+                    <br>
+                    <button type="submit" class="btn btn-purple">Save Leaderboard</button>
+                </form>
+                <div id="solpump-slotsStatus" class="status"></div>
+            </div>
+        </div>
+
+        <!-- STAKE TAB -->
+        <div class="tab-content" id="tab-stake">
+            <div class="card teal">
+                <h2>Stake Configuration</h2>
+                <form id="stake-configForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stake-startDate">Start Date (UTC)</label>
+                            <input type="date" id="stake-startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stake-endDate">End Date (UTC)</label>
+                            <input type="date" id="stake-endDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stake-prizePool">Total Prize Pool</label>
+                            <input type="number" id="stake-prizePool" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stake-prizeUnit">Prize Unit (SOL, USD)</label>
+                            <input type="text" id="stake-prizeUnit" value="USD" required>
+                        </div>
+                    </div>
+                    <div class="form-group pause-toggle">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="stake-paused">
+                            <span class="toggle-text">Pause Leaderboard (shows "ON PAUSE" on site)</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-teal">Save Config</button>
+                    <a href="/leaderboard/stake" class="btn btn-secondary">View Leaderboard</a>
+                </form>
+                <div id="stake-status" class="status"></div>
+            </div>
+            
+            <div class="card teal">
+                <h2>Stake Prizes (Top 10)</h2>
+                <form id="stake-prizesForm">
+                    <div class="prizes-grid" id="stake-prizesGrid"></div>
+                    <br>
+                    <button type="submit" class="btn btn-teal">Save Prizes</button>
+                </form>
+                <div id="stake-prizesStatus" class="status"></div>
+            </div>
+            
+            <div class="card teal">
+                <h2>Stake Leaderboard (10 Slots)</h2>
+                <p class="slots-hint">Fill in usernames and wager amounts. Leave empty slots blank - they won't appear on the leaderboard.</p>
+                <form id="stake-slotsForm">
+                    <table class="slots-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Username</th>
+                                <th>Wager Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stake-slotsBody"></tbody>
+                    </table>
+                    <br>
+                    <button type="submit" class="btn btn-teal">Save Leaderboard</button>
+                </form>
+                <div id="stake-slotsStatus" class="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let config = {};
+        let adminPassword = '';
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById('loginStatus');
+            const pwd = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch('/api/admin-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pwd })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    adminPassword = pwd;
+                    sessionStorage.setItem('adminPwd', pwd);
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    loadAllConfig();
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Invalid password';
+                }
+            } catch (e) {
+                statusEl.className = 'status error';
+                statusEl.textContent = 'Error: ' + e.message;
+            }
+        });
+
+        // Generate 10 slot rows with optional data
+        function generateSlotRows(lb, entries) {
+            const tbody = document.getElementById(lb + '-slotsBody');
+            tbody.innerHTML = '';
+            
+            // Sort entries by wager amount descending
+            const sortedEntries = (entries || []).slice().sort((a, b) => b.wagerAmount - a.wagerAmount);
+            
+            for (let i = 1; i <= 10; i++) {
+                const rankClass = i <= 3 ? ` rank-${i}` : '';
+                const entry = sortedEntries[i - 1] || { username: '', wagerAmount: '' };
+                const username = entry.username || '';
+                const wager = entry.wagerAmount || '';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="rank${rankClass}">#${i}</td>
+                        <td class="username-col">
+                            <input type="text" id="${lb}-slot-name-${i}" value="${username}" placeholder="Username">
+                        </td>
+                        <td class="wager-col">
+                            <input type="number" id="${lb}-slot-wager-${i}" value="${wager}" placeholder="0" step="0.01" min="0">
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function loadAllConfig() {
+            try {
+                const res = await fetch('/api/config');
+                config = await res.json();
+                
+                // Packdraw
+                const pd = config.packdraw || {};
+                document.getElementById('packdraw-currentStartDate').textContent = pd.startDate || '-';
+                document.getElementById('packdraw-currentEndDate').textContent = pd.endDate || '-';
+                document.getElementById('packdraw-currentPrizePool').textContent = '$' + (pd.prizePool || 1000).toLocaleString();
+                document.getElementById('packdraw-startDate').value = pd.startDate || '';
+                document.getElementById('packdraw-endDate').value = pd.endDate || '';
+                document.getElementById('packdraw-prizePool').value = pd.prizePool || 1000;
+                document.getElementById('packdraw-paused').checked = pd.paused || false;
+                renderPrizes('packdraw', pd.prizes || [250, 125, 75, 50, 50, 50, 50, 50, 50, 50]);
+                
+                // Solpump
+                const sp = config.solpump || {};
+                document.getElementById('solpump-startDate').value = sp.startDate || '';
+                document.getElementById('solpump-endDate').value = sp.endDate || '';
+                document.getElementById('solpump-prizePool').value = sp.prizePool || 500;
+                document.getElementById('solpump-prizeUnit').value = sp.prizeUnit || 'SOL';
+                document.getElementById('solpump-paused').checked = sp.paused || false;
+                renderPrizes('solpump', sp.prizes || [100, 75, 50, 30, 25, 25, 25, 25, 25, 20]);
+                generateSlotRows('solpump', sp.entries || []);
+                
+                // Stake
+                const st = config.stake || {};
+                document.getElementById('stake-startDate').value = st.startDate || '';
+                document.getElementById('stake-endDate').value = st.endDate || '';
+                document.getElementById('stake-prizePool').value = st.prizePool || 500;
+                document.getElementById('stake-prizeUnit').value = st.prizeUnit || 'USD';
+                document.getElementById('stake-paused').checked = st.paused || false;
+                renderPrizes('stake', st.prizes || [100, 75, 50, 30, 25, 25, 25, 25, 25, 20]);
+                generateSlotRows('stake', st.entries || []);
+            } catch (e) {
+                console.error('Failed to load config:', e);
+            }
+        }
+
+        function renderPrizes(lb, prizes) {
+            const grid = document.getElementById(lb + '-prizesGrid');
+            grid.innerHTML = '';
+            prizes.forEach((prize, i) => {
+                const div = document.createElement('div');
+                div.className = 'prize-input';
+                div.innerHTML = `
+                    <label for="${lb}-prize${i}">#${i + 1}</label>
+                    <input type="number" id="${lb}-prize${i}" value="${prize}" min="0" step="0.01">
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // Config forms
+        ['packdraw', 'solpump', 'stake'].forEach(lb => {
+            document.getElementById(lb + '-configForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById(lb + '-status');
+                
+                try {
+                    const body = {
+                        password: adminPassword,
+                        leaderboard: lb,
+                        startDate: document.getElementById(lb + '-startDate').value,
+                        endDate: document.getElementById(lb + '-endDate').value,
+                        prizePool: Number(document.getElementById(lb + '-prizePool').value)
+                    };
+                    
+                    if (lb !== 'packdraw') {
+                        body.prizeUnit = document.getElementById(lb + '-prizeUnit').value;
+                    }
+                    body.paused = document.getElementById(lb + '-paused').checked;
+                    
+                    const res = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        statusEl.className = 'status success';
+                        statusEl.textContent = 'Configuration saved!';
+                        loadAllConfig();
+                    } else {
+                        throw new Error(data.error || 'Failed to save');
+                    }
+                } catch (e) {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Error: ' + e.message;
+                }
+            });
+
+            document.getElementById(lb + '-prizesForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById(lb + '-prizesStatus');
+                
+                try {
+                    const prizes = [];
+                    for (let i = 0; i < 10; i++) {
+                        const input = document.getElementById(lb + '-prize' + i);
+                        if (input) prizes.push(Number(input.value));
+                    }
+                    
+                    const res = await fetch('/api/config', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: adminPassword, leaderboard: lb, prizes })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        statusEl.className = 'status success';
+                        statusEl.textContent = 'Prizes saved!';
+                    } else {
+                        throw new Error(data.error || 'Failed to save');
+                    }
+                } catch (e) {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Error: ' + e.message;
+                }
+            });
+        });
+
+        // Slots forms for Solpump and Rugsfun
+        ['solpump', 'stake'].forEach(lb => {
+            document.getElementById(lb + '-slotsForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const statusEl = document.getElementById(lb + '-slotsStatus');
+                
+                try {
+                    // Collect all non-empty slots
+                    const entries = [];
+                    for (let i = 1; i <= 10; i++) {
+                        const username = document.getElementById(lb + '-slot-name-' + i).value.trim();
+                        const wager = document.getElementById(lb + '-slot-wager-' + i).value;
+                        
+                        if (username && wager && Number(wager) > 0) {
+                            entries.push({
+                                id: 'slot-' + i,
+                                username: username,
+                                wagerAmount: Number(wager)
+                            });
+                        }
+                    }
+                    
+                    // Sort by wager amount descending
+                    entries.sort((a, b) => b.wagerAmount - a.wagerAmount);
+                    
+                    const res = await fetch('/api/leaderboard/' + lb + '/slots', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ password: adminPassword, entries })
+                    });
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        statusEl.className = 'status success';
+                        statusEl.textContent = 'Leaderboard saved! (' + entries.length + ' entries)';
+                        // Don't reload - keep current values visible
+                        // Data is already saved to server
+                    } else {
+                        throw new Error(data.error || 'Failed to save');
+                    }
+                } catch (e) {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = 'Error: ' + e.message;
+                }
+            });
+        });
+
+        // Auto-login if session exists
+        const savedPwd = sessionStorage.getItem('adminPwd');
+        if (savedPwd) {
+            fetch('/api/admin-auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: savedPwd })
+            }).then(res => res.json()).then(data => {
+                if (data.success) {
+                    adminPassword = savedPwd;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    loadAllConfig();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
