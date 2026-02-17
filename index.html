@@ -577,15 +577,13 @@
                     }
                 }
                 if (data.solpump) {
-                    const unit = data.solpump.prizeUnit || 'SOL';
-                    document.getElementById('solpump-prize').textContent = formatPrize(data.solpump.prizePool || 500, unit);
+                    document.getElementById('solpump-prize').textContent = formatPrize(data.solpump.prizePool || 500, 'USD');
                     if (data.solpump.paused) {
                         document.getElementById('solpump-pause-badge').classList.add('show');
                     }
                 }
                 if (data.stake) {
-                    const unit = data.stake.prizeUnit || 'USD';
-                    document.getElementById('stake-prize').textContent = formatPrize(data.stake.prizePool || 500, unit);
+                    document.getElementById('stake-prize').textContent = formatPrize(data.stake.prizePool || 500, 'USD');
                     if (data.stake.paused) {
                         document.getElementById('stake-pause-badge').classList.add('show');
                     }
