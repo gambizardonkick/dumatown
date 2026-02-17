@@ -44,14 +44,14 @@ function getDefaultConfig() {
     solpump: {
       ...defaultDates,
       prizePool: 500,
-      prizeUnit: 'USD',
+      wagerUnit: 'SOL',
       prizes: [100, 75, 50, 30, 25, 25, 25, 25, 25, 20],
       entries: []
     },
     stake: {
       ...defaultDates,
       prizePool: 500,
-      prizeUnit: 'USD',
+      wagerUnit: 'USD',
       prizes: [100, 75, 50, 30, 25, 25, 25, 25, 25, 20],
       entries: []
     }
@@ -157,7 +157,7 @@ const server = http.createServer(async (req, res) => {
         startDate: config.solpump.startDate,
         endDate: config.solpump.endDate,
         prizePool: config.solpump.prizePool || 500,
-        prizeUnit: config.solpump.prizeUnit || 'SOL',
+        wagerUnit: config.solpump.wagerUnit || 'SOL',
         prizes: config.solpump.prizes,
         entries: config.solpump.entries || [],
         paused: config.solpump.paused || false
@@ -166,7 +166,7 @@ const server = http.createServer(async (req, res) => {
         startDate: config.stake.startDate,
         endDate: config.stake.endDate,
         prizePool: config.stake.prizePool || 500,
-        prizeUnit: config.stake.prizeUnit || 'SOL',
+        wagerUnit: config.stake.wagerUnit || 'USD',
         prizes: config.stake.prizes,
         entries: config.stake.entries || [],
         paused: config.stake.paused || false
@@ -215,7 +215,7 @@ const server = http.createServer(async (req, res) => {
       if (body.startDate) config[lb].startDate = body.startDate;
       if (body.endDate) config[lb].endDate = body.endDate;
       if (body.prizePool !== undefined) config[lb].prizePool = Number(body.prizePool);
-      if (body.prizeUnit) config[lb].prizeUnit = body.prizeUnit;
+      if (body.wagerUnit) config[lb].wagerUnit = body.wagerUnit;
       if (body.prizes) config[lb].prizes = body.prizes.map(p => Number(p));
       if (body.paused !== undefined) config[lb].paused = body.paused;
       
@@ -309,7 +309,7 @@ const server = http.createServer(async (req, res) => {
       startDate: solpump.startDate,
       endDate: solpump.endDate,
       prizePool: solpump.prizePool,
-      prizeUnit: solpump.prizeUnit || 'SOL',
+      wagerUnit: solpump.wagerUnit || 'SOL',
       prizes: solpump.prizes,
       paused: solpump.paused || false
     }));
@@ -329,7 +329,7 @@ const server = http.createServer(async (req, res) => {
       startDate: stake.startDate,
       endDate: stake.endDate,
       prizePool: stake.prizePool,
-      prizeUnit: stake.prizeUnit || 'SOL',
+      wagerUnit: stake.wagerUnit || 'USD',
       prizes: stake.prizes,
       paused: stake.paused || false
     }));
