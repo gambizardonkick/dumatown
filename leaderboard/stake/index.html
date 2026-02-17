@@ -682,7 +682,6 @@
 
         let endDate = null;
         let prizePool = 500;
-        let prizeUnit = 'SOL';
         let rewards = [100, 75, 50, 30, 25, 25, 25, 25, 25, 20];
 
         function updateCountdown() {
@@ -712,18 +711,12 @@
 
         function formatAmount(amount) {
             const formatted = Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            if (prizeUnit === 'USD' || prizeUnit === '$') {
-                return '$' + formatted;
-            }
-            return formatted + ' ' + prizeUnit;
+            return '$' + formatted;
         }
         
         function formatPrizePool(amount) {
             const formatted = Number(amount).toLocaleString();
-            if (prizeUnit === 'USD' || prizeUnit === '$') {
-                return '$' + formatted;
-            }
-            return formatted + ' ' + prizeUnit;
+            return '$' + formatted;
         }
 
         function showPauseBanner() {
@@ -779,7 +772,6 @@
                 
                 endDate = result.endDate;
                 prizePool = result.prizePool || 500;
-                prizeUnit = result.prizeUnit || 'SOL';
                 rewards = result.prizes || [100, 75, 50, 30, 25, 25, 25, 25, 25, 20];
                 
                 document.getElementById('prize-pool').textContent = formatPrizePool(prizePool);
@@ -810,12 +802,8 @@
                 const res = await fetch('/api/config');
                 const cfg = await res.json();
                 document.getElementById('nav-prize-packdraw').textContent = '$' + (cfg.packdraw?.prizePool || 1000).toLocaleString();
-                const spUnit = cfg.solpump?.prizeUnit || 'SOL';
-                const spPool = cfg.solpump?.prizePool || 500;
-                document.getElementById('nav-prize-solpump').textContent = spUnit === 'USD' ? '$' + spPool.toLocaleString() : spPool.toLocaleString() + ' ' + spUnit;
-                const stUnit = cfg.stake?.prizeUnit || 'SOL';
-                const stPool = cfg.stake?.prizePool || 500;
-                document.getElementById('nav-prize-stake').textContent = stUnit === 'USD' ? '$' + stPool.toLocaleString() : stPool.toLocaleString() + ' ' + stUnit;
+                document.getElementById('nav-prize-solpump').textContent = '$' + (cfg.solpump?.prizePool || 500).toLocaleString();
+                document.getElementById('nav-prize-stake').textContent = '$' + (cfg.stake?.prizePool || 500).toLocaleString();
             } catch (e) { console.error('Failed to load nav prizes:', e); }
         }
 
